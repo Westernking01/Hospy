@@ -11,6 +11,7 @@ import {
   Lock,
 } from "lucide-react";
 import { PageHeader } from "@/components/admin/page-header";
+import { FileUpload } from "@/components/common/file-upload";
 
 export default function AdminSettingsPage() {
   const [activeTab, setActiveTab] = useState("GENERAL");
@@ -18,6 +19,7 @@ export default function AdminSettingsPage() {
 
   // Form State
   const [storeName, setStoreName] = useState("HOPSY PLAZA • Premium Electronics & Tech Hub");
+  const [storeLogo, setStoreLogo] = useState("");
   const [storeAddress, setStoreAddress] = useState("Km 4, Ikere Road, Opposite State Secretariat, Ado-Ekiti, Ekiti State, Nigeria");
   const [supportEmail, setSupportEmail] = useState("support@hopsyplaza.com");
   const [supportPhone, setSupportPhone] = useState("+234 803 000 1122");
@@ -111,6 +113,18 @@ export default function AdminSettingsPage() {
                   value={storeName}
                   onChange={(e) => setStoreName(e.target.value)}
                   className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm font-medium text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              </div>
+
+              <div className="space-y-1.5 sm:col-span-2">
+                <label className="font-medium uppercase tracking-wider text-muted-foreground">
+                  Store Logo
+                </label>
+                <FileUpload
+                  folder="settings"
+                  defaultImage={storeLogo}
+                  onUploadComplete={(url) => setStoreLogo(url)}
+                  onRemove={() => setStoreLogo("")}
                 />
               </div>
 

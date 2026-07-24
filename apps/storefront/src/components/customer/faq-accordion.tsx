@@ -1,9 +1,9 @@
 "use client";
-
+import { MOCK_FAQS } from "@hopsy/commerce/src/mock-data";
 import React, { useState } from "react";
 import Link from "next/link";
 import { ChevronDown, ArrowRight } from "lucide-react";
-import { MOCK_FAQS, type MockFaq } from "@hopsy/commerce/src/mock-data";
+
 
 interface FaqAccordionProps {
   items?: MockFaq[];

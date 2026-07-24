@@ -19,7 +19,9 @@ import { AdminModal } from "@/components/admin/admin-modal";
 import { PageHeader } from "@/components/admin/page-header";
 import { Card } from "@/components/admin/card";
 import { StatusBadge } from "@/components/admin/status-badge";
-import { adminService, AdminProductItem } from "@hopsy/commerce/src/admin/admin.service";
+import { AdminProductItem } from "@hopsy/commerce/src/admin/admin.types";
+import { getProductsAction } from "@hopsy/commerce/src/admin/admin.actions";
+
 
 export default function AdminProductsDirectoryPage() {
   const [products, setProducts] = useState<AdminProductItem[]>([]);
@@ -33,7 +35,7 @@ export default function AdminProductsDirectoryPage() {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const data = await adminService.getProducts(searchQuery, activeTab);
+      const data = await getProductsAction(searchQuery, activeTab);
       setProducts(data);
     } catch (err) {
       console.error("Failed to load catalog SKUs:", err);

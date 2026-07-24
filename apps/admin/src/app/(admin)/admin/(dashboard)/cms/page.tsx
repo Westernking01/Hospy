@@ -15,6 +15,7 @@ import { AdminModal } from "@/components/admin/admin-modal";
 import { PageHeader } from "@/components/admin/page-header";
 import { Card } from "@/components/admin/card";
 import { StatusBadge } from "@/components/admin/status-badge";
+import { FileUpload } from "@/components/common/file-upload";
 
 interface CMSItem {
   id: string;
@@ -24,6 +25,7 @@ interface CMSItem {
   badgeText: string;
   ctaText: string;
   ctaUrl: string;
+  imageUrl?: string;
   status: "ACTIVE" | "DRAFT" | "ARCHIVED";
   lastModified: string;
 }
@@ -37,6 +39,7 @@ const initialCMSItems: CMSItem[] = [
     badgeText: "🔥 AUTHORITATIVE ENTERPRISE LAUNCH",
     ctaText: "Shop Flagship Catalog →",
     ctaUrl: "/products",
+    imageUrl: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=80",
     status: "ACTIVE",
     lastModified: "Today, 09:14 AM",
   },
@@ -88,6 +91,7 @@ export default function AdminCMSPage() {
   const [editBadge, setEditBadge] = useState("");
   const [editCtaText, setEditCtaText] = useState("");
   const [editCtaUrl, setEditCtaUrl] = useState("");
+  const [editImageUrl, setEditImageUrl] = useState("");
 
   const handleOpenEdit = (item: CMSItem) => {
     setSelectedItem(item);
@@ -96,6 +100,7 @@ export default function AdminCMSPage() {
     setEditBadge(item.badgeText);
     setEditCtaText(item.ctaText);
     setEditCtaUrl(item.ctaUrl);
+    setEditImageUrl(item.imageUrl || "");
     setIsModalOpen(true);
   };
 
@@ -122,6 +127,7 @@ export default function AdminCMSPage() {
               badgeText: editBadge,
               ctaText: editCtaText,
               ctaUrl: editCtaUrl,
+              imageUrl: editImageUrl,
               lastModified: "Just now (Modified)",
             }
           : i
@@ -337,6 +343,18 @@ export default function AdminCMSPage() {
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 font-mono text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
               />
             </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="font-medium uppercase tracking-wider text-muted-foreground">
+              Banner / Background Image
+            </label>
+            <FileUpload
+              folder="cms"
+              defaultImage={editImageUrl}
+              onUploadComplete={(url) => setEditImageUrl(url)}
+              onRemove={() => setEditImageUrl("")}
+            />
           </div>
 
           <div className="flex items-center justify-end gap-2 pt-4 border-t border-border">

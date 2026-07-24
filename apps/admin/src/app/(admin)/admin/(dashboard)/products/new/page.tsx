@@ -14,7 +14,9 @@ import {
 } from "lucide-react";
 import { PageHeader } from "@/components/admin/page-header";
 import { Card } from "@/components/admin/card";
-import { adminService } from "@hopsy/commerce/src/admin/admin.service";
+import { getCategoriesAction } from "@hopsy/commerce/src/admin/admin.actions";
+
+import { FileUpload } from "@/components/common/file-upload";
 
 export default function AdminProductCreatePage() {
   const router = useRouter();
@@ -40,7 +42,7 @@ export default function AdminProductCreatePage() {
   });
 
   useEffect(() => {
-    adminService.getCategories().then((data) => setCategories(data));
+    getCategoriesAction().then((data) => setCategories(data));
   }, []);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -329,27 +331,14 @@ export default function AdminProductCreatePage() {
             <div className="space-y-3 pt-1">
               <div className="space-y-1.5">
                 <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Image URL (Unsplash / CDN)
+                  Product Image
                 </label>
-                <input
-                  type="url"
-                  value={formData.imageUrl}
-                  onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                <FileUpload
+                  folder="products"
+                  defaultImage={formData.imageUrl}
+                  onUploadComplete={(url) => setFormData({ ...formData, imageUrl: url })}
+                  onRemove={() => setFormData({ ...formData, imageUrl: "" })}
                 />
-              </div>
-
-              {/* Preview Box */}
-              <div className="w-full h-44 rounded-lg bg-muted/40 border border-dashed border-border overflow-hidden relative flex items-center justify-center">
-                {formData.imageUrl ? (
-                  <img
-                    src={formData.imageUrl}
-                    alt="Preview"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className="text-xs text-muted-foreground font-medium">No Image URL</span>
-                )}
               </div>
             </div>
 

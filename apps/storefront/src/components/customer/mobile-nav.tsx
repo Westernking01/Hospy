@@ -1,4 +1,5 @@
 "use client";
+import { useStorefrontData } from "@/components/customer/storefront-context";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -20,7 +21,7 @@ import {
   ShieldCheck,
   Phone,
 } from "lucide-react";
-import { MOCK_CATEGORIES, MOCK_BRANDS } from "@hopsy/commerce/src/mock-data";
+
 import { Button } from "@hopsy/ui";
 import { BrandLogo } from "@/components/common/brand-logo";
 
@@ -30,6 +31,8 @@ interface MobileNavProps {
 }
 
 export function MobileNav({ isOpen, onClose }: MobileNavProps) {
+  const { products, categories, brands } = useStorefrontData();
+
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"categories" | "brands" | "links">("categories");
@@ -150,7 +153,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
                 <span>Complete Catalog</span>
                 <ChevronRight className="w-4 h-4" />
               </Link>
-              {MOCK_CATEGORIES.map((cat) => (
+              {categories.map((cat) => (
                 <Link
                   key={cat.id}
                   href={`/categories/${cat.slug}`}
@@ -182,7 +185,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
                 <span>Authorized Brand Showcase</span>
                 <ChevronRight className="w-4 h-4" />
               </Link>
-              {MOCK_BRANDS.map((brand) => (
+              {brands.map((brand) => (
                 <Link
                   key={brand.id}
                   href={`/brands/${brand.slug}`}

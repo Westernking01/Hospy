@@ -1,5 +1,5 @@
 "use client";
-
+import { useStorefrontData } from "@/components/customer/storefront-context";
 import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import {
@@ -15,16 +15,14 @@ import {
   Zap,
   Clock,
 } from "lucide-react";
-import {
-  MOCK_PRODUCTS,
-  MOCK_CATEGORIES,
-  MOCK_BRANDS,
-  type MockProduct,
-} from "@hopsy/commerce/src/mock-data";
+
 import { ShopProductCard } from "@/components/customer/shop-product-card";
 import { QuickViewModal } from "@/components/customer/quick-view-modal";
 
 export default function ShopPage() {
+  const { products, categories, brands, loading } = useStorefrontData();
+  if (loading) return <div>Loading...</div>;
+
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedPriceRange, setSelectedPriceRange] = useState<string>("all");
@@ -32,7 +30,7 @@ export default function ShopPage() {
   const [selectedColor, setSelectedColor] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("featured");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [quickViewProduct, setQuickViewProduct] = useState<MockProduct | null>(null);
+  const [quickViewProduct, setQuickViewProduct] = useState<any | null>(null);
 
   // Best Selling tabs state
   const [bestSellingTab, setBestSellingTab] = useState<string>("all");
@@ -60,7 +58,7 @@ export default function ShopPage() {
 
   // Filtered and Sorted Main Products
   const filteredProducts = useMemo(() => {
-    let list = [...MOCK_PRODUCTS];
+    let list = [...products];
 
     if (selectedCategory !== "all") {
       list = list.filter((p) => p.category.slug === selectedCategory);
@@ -98,7 +96,7 @@ export default function ShopPage() {
 
   // Filtered Best Selling Products
   const bestSellingProducts = useMemo(() => {
-    let list = [...MOCK_PRODUCTS].sort((a, b) => b.review_count - a.review_count);
+    let list = [...products].sort((a, b) => b.review_count - a.review_count);
     if (bestSellingTab !== "all") {
       list = list.filter((p) => p.category.slug === bestSellingTab);
     }
@@ -215,7 +213,7 @@ export default function ShopPage() {
               className="w-full h-11 pl-4 pr-10 rounded-xl border border-neutral-200 bg-white hover:border-neutral-400 text-xs font-bold text-neutral-800 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-neutral-900 transition-all shadow-2xs"
             >
               <option value="all">Category: All Hardware</option>
-              {MOCK_CATEGORIES.map((cat) => (
+              {categories.map((cat) => (
                 <option key={cat.id} value={cat.slug}>
                   {cat.name}
                 </option>
@@ -251,7 +249,7 @@ export default function ShopPage() {
               className="w-full h-11 pl-4 pr-10 rounded-xl border border-neutral-200 bg-white hover:border-neutral-400 text-xs font-bold text-neutral-800 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-neutral-900 transition-all shadow-2xs"
             >
               <option value="all">Brand: All Global OEMs</option>
-              {MOCK_BRANDS.map((brand) => (
+              {brands.map((brand) => (
                 <option key={brand.id} value={brand.slug}>
                   {brand.name}
                 </option>

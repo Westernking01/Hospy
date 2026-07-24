@@ -1,10 +1,10 @@
 "use client";
-
+import { useStorefrontData } from "@/components/customer/storefront-context";
 import React, { useState, useMemo, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Search as SearchIcon, Filter, SlidersHorizontal, Grid, List, CheckCircle2, X } from "lucide-react";
-import { MOCK_PRODUCTS, MOCK_CATEGORIES, MOCK_BRANDS, type MockProduct } from "@hopsy/commerce/src/mock-data";
+
 import { ProductCard } from "@/components/customer/product-card";
 import { QuickViewModal } from "@/components/customer/quick-view-modal";
 import { Button } from "@hopsy/ui";
@@ -23,10 +23,10 @@ function SearchContent() {
   const [inStockOnly, setInStockOnly] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<string>("featured");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [quickViewProduct, setQuickViewProduct] = useState<MockProduct | null>(null);
+  const [quickViewProduct, setQuickViewProduct] = useState<any | null>(null);
 
   const filteredProducts = useMemo(() => {
-    let list = [...MOCK_PRODUCTS];
+    let list = [...products];
 
     if (query.trim()) {
       const q = query.toLowerCase();
@@ -135,7 +135,7 @@ function SearchContent() {
                 className="w-full h-12 px-3 rounded-xl bg-card border border-border text-xs font-bold text-foreground focus:border-primary outline-none shadow-sm"
               >
                 <option value="all">All Categories</option>
-                {MOCK_CATEGORIES.map((c) => (
+                {categories.map((c) => (
                   <option key={c.id} value={c.slug}>{c.name}</option>
                 ))}
               </select>
@@ -148,7 +148,7 @@ function SearchContent() {
                 className="w-full h-12 px-3 rounded-xl bg-card border border-border text-xs font-bold text-foreground focus:border-primary outline-none shadow-sm"
               >
                 <option value="all">All Brands</option>
-                {MOCK_BRANDS.map((b) => (
+                {brands.map((b) => (
                   <option key={b.id} value={b.slug}>{b.name}</option>
                 ))}
               </select>
@@ -282,6 +282,9 @@ function SearchContent() {
 }
 
 export default function SearchPage() {
+  const { products, categories, brands, loading } = useStorefrontData();
+  if (loading) return <div>Loading...</div>;
+
   return (
     <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-sm font-bold text-muted-foreground">Loading Search...</div>}>
       <SearchContent />

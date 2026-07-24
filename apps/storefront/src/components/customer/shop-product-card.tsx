@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { Heart, Eye, ShoppingBag, CheckCircle2 } from "lucide-react";
-import { type MockProduct } from "@hopsy/commerce/src/mock-data";
+
 import { useWishlist } from "./wishlist-context";
 import { useCart } from "./cart-context";
 

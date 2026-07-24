@@ -1,5 +1,5 @@
 "use client";
-
+import { useStorefrontData } from "@/components/customer/storefront-context";
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import {
@@ -16,12 +16,15 @@ import { useWishlist } from "@/components/customer/wishlist-context";
 import { useCart } from "@/components/customer/cart-context";
 import { ShopProductCard } from "@/components/customer/shop-product-card";
 import { QuickViewModal } from "@/components/customer/quick-view-modal";
-import { MOCK_PRODUCTS, type MockProduct } from "@hopsy/commerce/src/mock-data";
+
 
 export default function WishlistPage() {
+  const { products, categories, brands, loading } = useStorefrontData();
+  if (loading) return <div>Loading...</div>;
+
   const { wishlistItems, removeFromWishlist, clearWishlist } = useWishlist();
   const { addToCart } = useCart();
-  const [quickViewProduct, setQuickViewProduct] = useState<MockProduct | null>(null);
+  const [quickViewProduct, setQuickViewProduct] = useState<any | null>(null);
   const [movedAllNotification, setMovedAllNotification] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -30,7 +33,7 @@ export default function WishlistPage() {
     if (wishlistItems && wishlistItems.length > 0) {
       return wishlistItems;
     }
-    return MOCK_PRODUCTS.slice(0, 4);
+    return products.slice(0, 4);
   }, [wishlistItems]);
 
   const handleMoveAllToCart = () => {
@@ -156,7 +159,7 @@ export default function WishlistPage() {
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          {MOCK_PRODUCTS.slice(2, 6).map((product) => (
+          {products.slice(2, 6).map((product) => (
             <ShopProductCard
               key={product.id}
               product={product}

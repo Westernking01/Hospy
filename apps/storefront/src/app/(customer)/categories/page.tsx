@@ -1,5 +1,5 @@
 "use client";
-
+import { useStorefrontData } from "@/components/customer/storefront-context";
 import React from "react";
 import Link from "next/link";
 import {
@@ -15,9 +15,12 @@ import {
   Sparkles,
   ShieldCheck,
 } from "lucide-react";
-import { MOCK_CATEGORIES } from "@hopsy/commerce/src/mock-data";
+
 
 export default function CategoriesOverviewPage() {
+  const { products, categories, brands, loading } = useStorefrontData();
+  if (loading) return <div>Loading...</div>;
+
   const getCategoryIcon = (iconName?: string) => {
     switch (iconName) {
       case "Laptop":
@@ -69,7 +72,7 @@ export default function CategoriesOverviewPage() {
 
         {/* Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {MOCK_CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <Link
               key={cat.id}
               href={`/categories/${cat.slug}`}

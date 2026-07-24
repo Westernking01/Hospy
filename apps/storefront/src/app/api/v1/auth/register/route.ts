@@ -1,8 +1,19 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@hopsy/database";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(req: Request) {
   try {
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized: Invalid or missing session." },
+        { status: 401 }
+      );
+    }
+
     const body = await req.json();
     const { auth_user_id, email, first_name, last_name } = body;
 
@@ -10,6 +21,13 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { success: false, message: "Missing required fields (auth_user_id, email)." },
         { status: 400 }
+      );
+    }
+
+    if (user.id !== auth_user_id) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized: auth_user_id mismatch." },
+        { status: 403 }
       );
     }
 

@@ -1,16 +1,19 @@
 "use client";
+import { useStorefrontData } from "@/components/customer/storefront-context";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Flame, ArrowRight, Clock } from "lucide-react";
-import { MOCK_PRODUCTS, type MockProduct } from "@hopsy/commerce/src/mock-data";
+
 import { ProductCard } from "./product-card";
 
 interface FlashSaleProps {
-  onQuickView?: (product: MockProduct) => void;
+  onQuickView?: (product: any) => void;
 }
 
 export function FlashSale({ onQuickView }: FlashSaleProps) {
+  const { products, categories, brands } = useStorefrontData();
+
   const [timeLeft, setTimeLeft] = useState({ hours: 14, minutes: 35, seconds: 48 });
 
   useEffect(() => {
@@ -31,7 +34,7 @@ export function FlashSale({ onQuickView }: FlashSaleProps) {
     return () => clearInterval(timer);
   }, []);
 
-  const flashSaleProducts = MOCK_PRODUCTS.filter((p) => p.is_flash_sale);
+  const flashSaleProducts = products.filter((p) => p.is_flash_sale);
 
   if (flashSaleProducts.length === 0) return null;
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { type MockProduct } from "@hopsy/commerce/src/mock-data";
+
 import { ShopProductCard } from "./shop-product-card";
 
 interface ProductCardProps {

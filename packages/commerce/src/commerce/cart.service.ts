@@ -40,7 +40,6 @@ export async function calculateServerCart(
     let slug = item.slug || item.productId;
     let image = item.image || "https://images.unsplash.com/photo-1550009158-9ebf69173e03?auto=format&fit=crop&w=800&q=80";
 
-    try {
       if (item.variantId) {
         const dbVariant = await prisma.productVariant.findUnique({
           where: { id: item.variantId },
@@ -65,20 +64,6 @@ export async function calculateServerCart(
           slug = dbProduct.slug;
         }
       }
-    } catch (err) {
-      // Offline or mock table
-    }
-
-    if (livePrice === 0 && item.productId) {
-      const mockProduct = MOCK_PRODUCTS.find((p) => p.id === item.productId || p.slug === item.productId);
-      if (mockProduct) {
-        livePrice = mockProduct.price;
-        compareAtPrice = mockProduct.compare_at_price;
-        name = mockProduct.name;
-        slug = mockProduct.slug;
-        image = mockProduct.images?.[0] || image;
-      }
-    }
 
     // Verify stock
     const stockCheck = await checkStockAvailability(item.productId, item.variantId, item.quantity);
@@ -173,63 +158,58 @@ export async function mergeGuestCartWithUserCart(
   guestItems: ServerCartItem[]
 ): Promise<ServerCartSummary> {
   // Try fetching user cart from Prisma if database is connected
-  try {
-    let userCart = await prisma.shoppingCart.findFirst({
-      where: { customer_id: userId },
+  let userCart = await prisma.shoppingCart.findFirst({
+    where: { customer_id: userId },
+    include: { items: true },
+  });
+
+  if (!userCart) {
+    userCart = await prisma.shoppingCart.create({
+      data: { customer_id: userId },
       include: { items: true },
     });
+  }
 
-    if (!userCart) {
-      userCart = await prisma.shoppingCart.create({
-        data: { customer_id: userId },
-        include: { items: true },
+  // Merge guest items
+  for (const item of guestItems) {
+    const existing = userCart.items.find(
+      (i: any) => i.product_id === item.productId && i.variant_id === (item.variantId || null)
+    );
+    if (existing) {
+      await prisma.cartItem.update({
+        where: { id: existing.id },
+        data: {
+          quantity: existing.quantity + item.quantity,
+          subtotal: Number(existing.unit_price) * (existing.quantity + item.quantity),
+        },
+      });
+    } else {
+      await prisma.cartItem.create({
+        data: {
+          cart_id: userCart.id,
+          product_id: item.productId,
+          variant_id: item.variantId || null,
+          quantity: item.quantity,
+          unit_price: item.price || 0,
+          subtotal: (item.price || 0) * item.quantity,
+        },
       });
     }
-
-    // Merge guest items
-    for (const item of guestItems) {
-      const existing = userCart.items.find(
-        (i: any) => i.product_id === item.productId && i.variant_id === (item.variantId || null)
-      );
-      if (existing) {
-        await prisma.cartItem.update({
-          where: { id: existing.id },
-          data: {
-            quantity: existing.quantity + item.quantity,
-            subtotal: Number(existing.unit_price) * (existing.quantity + item.quantity),
-          },
-        });
-      } else {
-        await prisma.cartItem.create({
-          data: {
-            cart_id: userCart.id,
-            product_id: item.productId,
-            variant_id: item.variantId || null,
-            quantity: item.quantity,
-            unit_price: item.price || 0,
-            subtotal: (item.price || 0) * item.quantity,
-          },
-        });
-      }
-    }
-
-    const updatedUserCart = await prisma.shoppingCart.findFirst({
-      where: { customer_id: userId },
-      include: { items: true },
-    });
-
-    const clientItems = (updatedUserCart?.items || []).map((i: any) => ({
-      id: i.id,
-      productId: i.product_id,
-      variantId: i.variant_id,
-      quantity: i.quantity,
-    }));
-
-    return calculateServerCart(clientItems);
-  } catch (err) {
-    // Fallback if offline
-    return calculateServerCart(guestItems);
   }
+
+  const updatedUserCart = await prisma.shoppingCart.findFirst({
+    where: { customer_id: userId },
+    include: { items: true },
+  });
+
+  const clientItems = (updatedUserCart?.items || []).map((i: any) => ({
+    id: i.id,
+    productId: i.product_id,
+    variantId: i.variant_id,
+    quantity: i.quantity,
+  }));
+
+  return calculateServerCart(clientItems);
 }
 
 /**
@@ -253,70 +233,66 @@ export async function addItemToCart(
 
   // If authenticated user with connected database, update DB cart
   if (userId) {
-    try {
-      let userCart = await prisma.shoppingCart.findFirst({
-        where: { customer_id: userId },
+    let userCart = await prisma.shoppingCart.findFirst({
+      where: { customer_id: userId },
+      include: { items: true },
+    });
+    if (!userCart) {
+      userCart = await prisma.shoppingCart.create({
+        data: { customer_id: userId },
         include: { items: true },
       });
-      if (!userCart) {
-        userCart = await prisma.shoppingCart.create({
-          data: { customer_id: userId },
-          include: { items: true },
-        });
-      }
-
-      const existing = userCart.items.find(
-        (i: any) => i.product_id === item.productId && i.variant_id === (item.variantId || null)
-      );
-
-      // Verify live price
-      const baseSummary = await calculateServerCart([{ productId: item.productId, variantId: item.variantId, quantity: item.quantity }]);
-      const livePrice = baseSummary.items[0]?.price || 0;
-
-      if (existing) {
-        const newQty = existing.quantity + item.quantity;
-        const newStockCheck = await checkStockAvailability(item.productId, item.variantId || null, newQty);
-        if (!newStockCheck.available) {
-          return { success: false, message: newStockCheck.message || "Cannot add more; stock limit reached." };
-        }
-        await prisma.cartItem.update({
-          where: { id: existing.id },
-          data: {
-            quantity: newQty,
-            unit_price: livePrice,
-            subtotal: livePrice * newQty,
-          },
-        });
-      } else {
-        await prisma.cartItem.create({
-          data: {
-            cart_id: userCart.id,
-            product_id: item.productId,
-            variant_id: item.variantId || null,
-            quantity: item.quantity,
-            unit_price: livePrice,
-            subtotal: livePrice * item.quantity,
-          },
-        });
-      }
-
-      const updatedCart = await prisma.shoppingCart.findFirst({
-        where: { customer_id: userId },
-        include: { items: true },
-      });
-
-      const dbItems = (updatedCart?.items || []).map((i: any) => ({
-        id: i.id,
-        productId: i.product_id,
-        variantId: i.variant_id,
-        quantity: i.quantity,
-      }));
-
-      const summary = await calculateServerCart(dbItems, options);
-      return { success: true, message: "Item added to cart.", summary };
-    } catch (err) {
-      // Fallback to memory / guest array logic if offline
     }
+
+    const existing = userCart.items.find(
+      (i: any) => i.product_id === item.productId && i.variant_id === (item.variantId || null)
+    );
+
+    // Verify live price
+    const baseSummary = await calculateServerCart([{ productId: item.productId, variantId: item.variantId, quantity: item.quantity }]);
+    const livePrice = baseSummary.items[0]?.price || 0;
+
+    if (existing) {
+      const newQty = existing.quantity + item.quantity;
+      const newStockCheck = await checkStockAvailability(item.productId, item.variantId || null, newQty);
+      if (!newStockCheck.available) {
+        return { success: false, message: newStockCheck.message || "Cannot add more; stock limit reached." };
+      }
+      await prisma.cartItem.update({
+        where: { id: existing.id },
+        data: {
+          quantity: newQty,
+          unit_price: livePrice,
+          subtotal: livePrice * newQty,
+        },
+      });
+    } else {
+      await prisma.cartItem.create({
+        data: {
+          cart_id: userCart.id,
+          product_id: item.productId,
+          variant_id: item.variantId || null,
+          quantity: item.quantity,
+          unit_price: livePrice,
+          subtotal: livePrice * item.quantity,
+        },
+      });
+    }
+
+    const updatedCart = await prisma.shoppingCart.findFirst({
+      where: { customer_id: userId },
+      include: { items: true },
+    });
+
+    const dbItems = (updatedCart?.items || []).map((i: any) => ({
+      id: i.id,
+      productId: i.product_id,
+      variantId: i.variant_id,
+      quantity: i.quantity,
+    }));
+
+    const summary = await calculateServerCart(dbItems, options);
+    return { success: true, message: "Item added to cart.", summary };
   }
 
   // Memory/Guest fallback: manipulate currentItems array
@@ -354,54 +330,50 @@ export async function updateCartItem(
   }
 
   if (userId) {
-    try {
-      const userCart = await prisma.shoppingCart.findFirst({
+    const userCart = await prisma.shoppingCart.findFirst({
+      where: { customer_id: userId },
+      include: { items: true },
+    });
+    if (userCart) {
+      const existing = userCart.items.find(
+        (i: any) => i.id === itemIdOrProductId || i.product_id === itemIdOrProductId
+      );
+      if (!existing) {
+        return { success: false, message: "Cart item not found." };
+      }
+      const targetQty = updates.quantity !== undefined ? updates.quantity : existing.quantity;
+      const targetVariant = updates.variantId !== undefined ? updates.variantId : existing.variant_id;
+
+      const stockCheck = await checkStockAvailability(existing.product_id, targetVariant || null, targetQty);
+      if (!stockCheck.available) {
+        return { success: false, message: stockCheck.message || "Requested quantity is not available." };
+      }
+
+      const baseSummary = await calculateServerCart([{ productId: existing.product_id, variantId: targetVariant, quantity: targetQty }]);
+      const livePrice = baseSummary.items[0]?.price || Number(existing.unit_price);
+
+      await prisma.cartItem.update({
+        where: { id: existing.id },
+        data: {
+          quantity: targetQty,
+          variant_id: targetVariant || null,
+          unit_price: livePrice,
+          subtotal: livePrice * targetQty,
+        },
+      });
+
+      const updatedCart = await prisma.shoppingCart.findFirst({
         where: { customer_id: userId },
         include: { items: true },
       });
-      if (userCart) {
-        const existing = userCart.items.find(
-          (i: any) => i.id === itemIdOrProductId || i.product_id === itemIdOrProductId
-        );
-        if (!existing) {
-          return { success: false, message: "Cart item not found." };
-        }
-        const targetQty = updates.quantity !== undefined ? updates.quantity : existing.quantity;
-        const targetVariant = updates.variantId !== undefined ? updates.variantId : existing.variant_id;
-
-        const stockCheck = await checkStockAvailability(existing.product_id, targetVariant || null, targetQty);
-        if (!stockCheck.available) {
-          return { success: false, message: stockCheck.message || "Requested quantity is not available." };
-        }
-
-        const baseSummary = await calculateServerCart([{ productId: existing.product_id, variantId: targetVariant, quantity: targetQty }]);
-        const livePrice = baseSummary.items[0]?.price || Number(existing.unit_price);
-
-        await prisma.cartItem.update({
-          where: { id: existing.id },
-          data: {
-            quantity: targetQty,
-            variant_id: targetVariant || null,
-            unit_price: livePrice,
-            subtotal: livePrice * targetQty,
-          },
-        });
-
-        const updatedCart = await prisma.shoppingCart.findFirst({
-          where: { customer_id: userId },
-          include: { items: true },
-        });
-        const dbItems = (updatedCart?.items || []).map((i: any) => ({
-          id: i.id,
-          productId: i.product_id,
-          variantId: i.variant_id,
-          quantity: i.quantity,
-        }));
-        const summary = await calculateServerCart(dbItems, options);
-        return { success: true, message: "Cart item updated.", summary };
-      }
-    } catch (err) {
-      // Fallback
+      const dbItems = (updatedCart?.items || []).map((i: any) => ({
+        id: i.id,
+        productId: i.product_id,
+        variantId: i.variant_id,
+        quantity: i.quantity,
+      }));
+      const summary = await calculateServerCart(dbItems, options);
+      return { success: true, message: "Cart item updated.", summary };
     }
   }
 
@@ -432,33 +404,29 @@ export async function removeCartItem(
   options: { couponCode?: string | null; shippingMethodId?: string | null; state?: string | null } = {}
 ): Promise<{ success: boolean; message: string; summary?: ServerCartSummary }> {
   if (userId) {
-    try {
-      const userCart = await prisma.shoppingCart.findFirst({
+    const userCart = await prisma.shoppingCart.findFirst({
+      where: { customer_id: userId },
+      include: { items: true },
+    });
+    if (userCart) {
+      const existing = userCart.items.find(
+        (i: any) => i.id === itemIdOrProductId || i.product_id === itemIdOrProductId
+      );
+      if (existing) {
+        await prisma.cartItem.delete({ where: { id: existing.id } });
+      }
+      const updatedCart = await prisma.shoppingCart.findFirst({
         where: { customer_id: userId },
         include: { items: true },
       });
-      if (userCart) {
-        const existing = userCart.items.find(
-          (i: any) => i.id === itemIdOrProductId || i.product_id === itemIdOrProductId
-        );
-        if (existing) {
-          await prisma.cartItem.delete({ where: { id: existing.id } });
-        }
-        const updatedCart = await prisma.shoppingCart.findFirst({
-          where: { customer_id: userId },
-          include: { items: true },
-        });
-        const dbItems = (updatedCart?.items || []).map((i: any) => ({
-          id: i.id,
-          productId: i.product_id,
-          variantId: i.variant_id,
-          quantity: i.quantity,
-        }));
-        const summary = await calculateServerCart(dbItems, options);
-        return { success: true, message: "Item removed from cart.", summary };
-      }
-    } catch (err) {
-      // Fallback
+      const dbItems = (updatedCart?.items || []).map((i: any) => ({
+        id: i.id,
+        productId: i.product_id,
+        variantId: i.variant_id,
+        quantity: i.quantity,
+      }));
+      const summary = await calculateServerCart(dbItems, options);
+      return { success: true, message: "Item removed from cart.", summary };
     }
   }
 
@@ -472,11 +440,7 @@ export async function removeCartItem(
  */
 export async function clearCart(userId: string | null): Promise<{ success: boolean; message: string }> {
   if (userId) {
-    try {
-      await prisma.shoppingCart.deleteMany({ where: { customer_id: userId } });
-    } catch (err) {
-      // Fallback
-    }
+    await prisma.shoppingCart.deleteMany({ where: { customer_id: userId } });
   }
   return { success: true, message: "Cart cleared successfully." };
 }

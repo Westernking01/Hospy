@@ -7,7 +7,7 @@ import { YouMightLikeSection } from "@/components/customer/you-might-like";
 import { WhyChooseUsSection } from "@/components/customer/why-choose-us";
 import { TopSellingProductsSection } from "@/components/customer/top-selling-products";
 import dynamic from "next/dynamic";
-import { type MockProduct } from "@hopsy/commerce/src/mock-data";
+
 
 const PromoBannerTablet = dynamic(() => import("@/components/customer/promo-banner-tablet").then(mod => mod.PromoBannerTablet));
 const TrendingProductsSection = dynamic(() => import("@/components/customer/trending-products").then(mod => mod.TrendingProductsSection));

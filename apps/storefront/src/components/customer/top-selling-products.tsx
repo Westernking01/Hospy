@@ -1,12 +1,13 @@
 "use client";
+import { useStorefrontData } from "@/components/customer/storefront-context";
 
 import React, { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { MOCK_TOP_SELLING_PRODUCTS, type MockProduct, type MockLayoutCardItem } from "@hopsy/commerce/src/mock-data";
+
 import { ShopProductCard } from "./shop-product-card";
 import { QuickViewModal } from "./quick-view-modal";
 
-function toMockProduct(item: MockLayoutCardItem): MockProduct {
+function toany(item: any): any {
   const numericPrice = parseFloat(item.price.replace(/[^0-9.]/g, "") || "0");
   const numericOldPrice = item.oldPrice ? parseFloat(item.oldPrice.replace(/[^0-9.]/g, "") || "0") : undefined;
   return {
@@ -52,7 +53,9 @@ function toMockProduct(item: MockLayoutCardItem): MockProduct {
 }
 
 export function TopSellingProductsSection() {
-  const [quickViewProduct, setQuickViewProduct] = useState<MockProduct | null>(null);
+  const { products, categories, brands } = useStorefrontData();
+
+  const [quickViewProduct, setQuickViewProduct] = useState<any | null>(null);
 
   return (
     <section className="py-14 sm:py-16 bg-white border-b border-neutral-200">
@@ -82,8 +85,8 @@ export function TopSellingProductsSection() {
 
         {/* 4-Column Product Grid matching Veluno ShopProductCard layout */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {MOCK_TOP_SELLING_PRODUCTS.map((item) => {
-            const adapted = toMockProduct(item);
+          {products.map((item) => {
+            const adapted = toany(item);
             return (
               <ShopProductCard
                 key={item.id}

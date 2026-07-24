@@ -16,7 +16,9 @@ import { AdminModal } from "@/components/admin/admin-modal";
 import { PageHeader } from "@/components/admin/page-header";
 import { Card } from "@/components/admin/card";
 import { StatusBadge } from "@/components/admin/status-badge";
-import { adminService, AdminReviewItem } from "@hopsy/commerce/src/admin/admin.service";
+import { AdminReviewItem } from "@hopsy/commerce/src/admin/admin.types";
+import { getReviewsAction } from "@hopsy/commerce/src/admin/admin.actions";
+
 
 export default function AdminReviewsPage() {
   const [reviews, setReviews] = useState<AdminReviewItem[]>([]);
@@ -30,7 +32,7 @@ export default function AdminReviewsPage() {
 
   const fetchReviews = async () => {
     setLoading(true);
-    const data = await adminService.getReviews(activeTab);
+    const data = await getReviewsAction(activeTab);
     setReviews(data);
     setLoading(false);
   };

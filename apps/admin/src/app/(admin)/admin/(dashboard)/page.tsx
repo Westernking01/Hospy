@@ -23,7 +23,9 @@ import { AdminTable, Column } from "@/components/admin/admin-table";
 import { Card, CardHeader } from "@/components/admin/card";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { PageHeader } from "@/components/admin/page-header";
-import { adminService, AdminDashboardMetrics } from "@hopsy/commerce/src/admin/admin.service";
+import { AdminDashboardMetrics } from "@hopsy/commerce/src/admin/admin.types";
+import { getDashboardOverviewAction } from "@hopsy/commerce/src/admin/admin.actions";
+
 
 export default function AdminDashboardOverview() {
   const [metrics, setMetrics] = useState<AdminDashboardMetrics | null>(null);
@@ -34,7 +36,7 @@ export default function AdminDashboardOverview() {
   const fetchOverview = async () => {
     setLoading(true);
     try {
-      const data = await adminService.getDashboardOverview();
+      const data = await getDashboardOverviewAction();
       setMetrics(data);
     } catch (err) {
       console.error("Failed to load dashboard metrics:", err);

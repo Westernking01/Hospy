@@ -16,7 +16,9 @@ import { AdminModal } from "@/components/admin/admin-modal";
 import { PageHeader } from "@/components/admin/page-header";
 import { Card } from "@/components/admin/card";
 import { StatusBadge } from "@/components/admin/status-badge";
-import { adminService, AdminOrderItem } from "@hopsy/commerce/src/admin/admin.service";
+import { AdminOrderItem } from "@hopsy/commerce/src/admin/admin.types";
+import { getOrdersAction } from "@hopsy/commerce/src/admin/admin.actions";
+
 
 export default function AdminOrdersDirectoryPage() {
   const [orders, setOrders] = useState<AdminOrderItem[]>([]);
@@ -29,7 +31,7 @@ export default function AdminOrdersDirectoryPage() {
 
   const fetchOrders = async () => {
     setLoading(true);
-    const data = await adminService.getOrders(activeTab, searchQuery);
+    const data = await getOrdersAction(activeTab, searchQuery);
     setOrders(data);
     setLoading(false);
   };

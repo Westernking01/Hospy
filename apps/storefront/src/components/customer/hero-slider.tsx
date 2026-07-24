@@ -1,9 +1,9 @@
 "use client";
-
+import { MOCK_BANNERS } from "@hopsy/commerce/src/mock-data";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, ArrowRight, ShieldCheck, Zap, Star, Plus } from "lucide-react";
-import { MOCK_BANNERS } from "@hopsy/commerce/src/mock-data";
+
 import { Button } from "@hopsy/ui";
 import { Image } from "@/components/ui/image";
 

@@ -1,5 +1,5 @@
 "use client";
-
+import { useStorefrontData } from "@/components/customer/storefront-context";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
@@ -13,13 +13,16 @@ import {
   Percent,
   Flame,
 } from "lucide-react";
-import { MOCK_PRODUCTS, type MockProduct } from "@hopsy/commerce/src/mock-data";
+
 import { ShopProductCard } from "@/components/customer/shop-product-card";
 import { QuickViewModal } from "@/components/customer/quick-view-modal";
 
 export default function DealsPage() {
+  const { products, categories, brands, loading } = useStorefrontData();
+  if (loading) return <div>Loading...</div>;
+
   const [activeTab, setActiveTab] = useState<string>("all");
-  const [quickViewProduct, setQuickViewProduct] = useState<MockProduct | null>(null);
+  const [quickViewProduct, setQuickViewProduct] = useState<any | null>(null);
 
   // Countdown timer state for Hot Deals
   const [timeLeft, setTimeLeft] = useState({
@@ -43,7 +46,7 @@ export default function DealsPage() {
   }, []);
 
   // Filter products that have compare_at_price (discounted deals) or all items if simulated deal
-  const dealProducts = MOCK_PRODUCTS.filter((p) => {
+  const dealProducts = products.filter((p) => {
     if (activeTab === "all") return Boolean(p.compare_at_price);
     if (activeTab === "flash") return p.rating >= 4.7 && Boolean(p.compare_at_price);
     if (activeTab === "clearance") return Boolean(p.compare_at_price) && (p.compare_at_price! - p.price) > 50;

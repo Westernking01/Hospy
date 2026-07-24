@@ -1,4 +1,5 @@
 "use client";
+import { useStorefrontData } from "@/components/customer/storefront-context";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -19,9 +20,11 @@ import {
   Tag,
   ArrowRight,
 } from "lucide-react";
-import { MOCK_CATEGORIES, MOCK_BRANDS } from "@hopsy/commerce/src/mock-data";
+
 
 export function MegaNav() {
+  const { products, categories, brands } = useStorefrontData();
+
   const pathname = usePathname();
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
@@ -150,7 +153,7 @@ export function MegaNav() {
           <div className="max-w-7xl mx-auto px-6 py-8">
             <div className="grid grid-cols-4 gap-8">
               <div className="col-span-3 grid grid-cols-3 gap-6">
-                {MOCK_CATEGORIES.map((cat) => (
+                {categories.map((cat) => (
                   <Link
                     key={cat.id}
                     href={`/categories/${cat.slug}`}
@@ -228,7 +231,7 @@ export function MegaNav() {
             </div>
 
             <div className="grid grid-cols-6 gap-4">
-              {MOCK_BRANDS.map((brand) => (
+              {brands.map((brand) => (
                 <Link
                   key={brand.id}
                   href={`/brands/${brand.slug}`}

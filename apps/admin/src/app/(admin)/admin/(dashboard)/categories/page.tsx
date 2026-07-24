@@ -14,7 +14,9 @@ import { AdminModal } from "@/components/admin/admin-modal";
 import { PageHeader } from "@/components/admin/page-header";
 import { Card } from "@/components/admin/card";
 import { StatusBadge } from "@/components/admin/status-badge";
-import { adminService } from "@hopsy/commerce/src/admin/admin.service";
+import { getCategoriesAction } from "@hopsy/commerce/src/admin/admin.actions";
+
+import { FileUpload } from "@/components/common/file-upload";
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<any[]>([]);
@@ -33,7 +35,7 @@ export default function AdminCategoriesPage() {
 
   const loadCategories = async () => {
     setLoading(true);
-    const data = await adminService.getCategories();
+    const data = await getCategoriesAction();
     setCategories(data);
     setLoading(false);
   };
@@ -245,13 +247,13 @@ export default function AdminCategoriesPage() {
 
           <div className="space-y-1.5">
             <label className="font-medium uppercase tracking-wider text-muted-foreground">
-              Banner / Icon URL
+              Banner / Icon
             </label>
-            <input
-              type="url"
-              value={newCat.imageUrl}
-              onChange={(e) => setNewCat({ ...newCat, imageUrl: e.target.value })}
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            <FileUpload
+              folder="categories"
+              defaultImage={newCat.imageUrl}
+              onUploadComplete={(url) => setNewCat({ ...newCat, imageUrl: url })}
+              onRemove={() => setNewCat({ ...newCat, imageUrl: "" })}
             />
           </div>
 

@@ -16,7 +16,8 @@ import {
   AlertCircle,
   QrCode,
 } from "lucide-react";
-import { adminService, AdminOrderItem } from "@hopsy/commerce/src/admin/admin.service";
+import { AdminOrderItem } from "@hopsy/commerce/src/admin/admin.types";
+
 import { StatusBadge } from "@/components/admin/status-badge";
 
 export default function AdminOrderDetailPage() {

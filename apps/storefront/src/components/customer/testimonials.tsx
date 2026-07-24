@@ -1,8 +1,8 @@
 "use client";
-
+import { MOCK_TESTIMONIALS } from "@hopsy/commerce/src/mock-data";
 import React from "react";
 import { Star, CheckCircle2, Quote } from "lucide-react";
-import { MOCK_TESTIMONIALS } from "@hopsy/commerce/src/mock-data";
+
 
 export function TestimonialsSection() {
   return (

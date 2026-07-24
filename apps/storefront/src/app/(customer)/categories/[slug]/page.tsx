@@ -1,5 +1,5 @@
 "use client";
-
+import { useStorefrontData } from "@/components/customer/storefront-context";
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -11,27 +11,25 @@ import {
   ShieldCheck,
   ChevronLeft,
 } from "lucide-react";
-import {
-  MOCK_CATEGORIES,
-  MOCK_PRODUCTS,
-  MOCK_BRANDS,
-  type MockProduct,
-} from "@hopsy/commerce/src/mock-data";
+
 import { ShopProductCard } from "@/components/customer/shop-product-card";
 import { QuickViewModal } from "@/components/customer/quick-view-modal";
 
 export default function CategoryDetailPage() {
+  const { products, categories, brands, loading } = useStorefrontData();
+  if (loading) return <div>Loading...</div>;
+
   const params = useParams();
   const slug = typeof params?.slug === "string" ? params.slug : "";
 
-  const category = MOCK_CATEGORIES.find((c) => c.slug === slug) || {
+  const category = categories.find((c) => c.slug === slug) || {
     id: "all",
     name: "All Hardware Products",
     slug: "all",
     description: "Browse our entire electronics inventory across all premium categories and brands.",
     image_url: "",
     icon: "Laptop",
-    itemCount: MOCK_PRODUCTS.length,
+    itemCount: products.length,
   };
 
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -40,13 +38,13 @@ export default function CategoryDetailPage() {
   const [selectedColor, setSelectedColor] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("featured");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [quickViewProduct, setQuickViewProduct] = useState<MockProduct | null>(null);
+  const [quickViewProduct, setQuickViewProduct] = useState<any | null>(null);
 
   // Filtered and Sorted Products
   const filteredProducts = useMemo(() => {
     let list = slug && slug !== "all"
-      ? MOCK_PRODUCTS.filter((p) => p.category.slug === slug)
-      : [...MOCK_PRODUCTS];
+      ? products.filter((p) => p.category.slug === slug)
+      : [...products];
 
     if (selectedBrand !== "all") {
       list = list.filter((p) => p.brand.slug === selectedBrand);
@@ -208,7 +206,7 @@ export default function CategoryDetailPage() {
               className="w-full h-11 pl-4 pr-10 rounded-xl border border-neutral-200 bg-white hover:border-neutral-400 text-xs font-bold text-neutral-800 appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-neutral-900 transition-all shadow-2xs"
             >
               <option value="all">Brand: All Global OEMs</option>
-              {MOCK_BRANDS.map((brand) => (
+              {brands.map((brand) => (
                 <option key={brand.id} value={brand.slug}>
                   {brand.name}
                 </option>

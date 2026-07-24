@@ -1,5 +1,5 @@
 "use client";
-
+import { useStorefrontData } from "@/components/customer/storefront-context";
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -21,12 +21,15 @@ import {
   Minus,
 } from "lucide-react";
 import { useCart } from "@/components/customer/cart-context";
-import { MOCK_PRODUCTS, type MockProduct } from "@hopsy/commerce/src/mock-data";
+
 import { ShopProductCard } from "@/components/customer/shop-product-card";
 import { QuickViewModal } from "@/components/customer/quick-view-modal";
 import { Button } from "@hopsy/ui";
 
 export default function CartPage() {
+  const { products, categories, brands, loading } = useStorefrontData();
+  if (loading) return <div>Loading...</div>;
+
   const router = useRouter();
   const {
     cartItems,
@@ -43,7 +46,7 @@ export default function CartPage() {
   const [couponInput, setCouponInput] = useState(couponCode || "");
   const [couponMsg, setCouponMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
-  const [quickViewProduct, setQuickViewProduct] = useState<MockProduct | null>(null);
+  const [quickViewProduct, setQuickViewProduct] = useState<any | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
   // If cart is empty, display 2 sample hardware items so the exact screenshot layout is immediately visible
@@ -65,7 +68,7 @@ export default function CartPage() {
         id: "sample-1",
         name: "MacBook Pro M3 Max 16-Inch (64GB RAM)",
         price: 3990000,
-        image: MOCK_PRODUCTS[0]?.images[0] || "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800",
+        image: products[0]?.images[0] || "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800",
         quantity: 1,
         spec: "Space Gray • 1TB NVMe SSD",
         returnDays: "30 Days return available",
@@ -75,7 +78,7 @@ export default function CartPage() {
         id: "sample-2",
         name: "NVIDIA GeForce RTX 4090 OC Founders Edition",
         price: 2100000,
-        image: MOCK_PRODUCTS[1]?.images[0] || "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=800",
+        image: products[1]?.images[0] || "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=800",
         quantity: 1,
         spec: "Midnight Matte Black • 24GB GDDR6X",
         returnDays: "30 Days return available",
@@ -449,7 +452,7 @@ export default function CartPage() {
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          {MOCK_PRODUCTS.slice(0, 4).map((product) => (
+          {products.slice(0, 4).map((product) => (
             <ShopProductCard
               key={product.id}
               product={product}

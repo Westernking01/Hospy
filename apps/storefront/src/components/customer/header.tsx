@@ -1,4 +1,5 @@
 "use client";
+import { useStorefrontData } from "@/components/customer/storefront-context";
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -16,7 +17,7 @@ import {
 } from "lucide-react";
 import { useWishlist } from "./wishlist-context";
 import { useCart } from "./cart-context";
-import { MOCK_PRODUCTS } from "@hopsy/commerce/src/mock-data";
+
 import { BrandLogo } from "@/components/common/brand-logo";
 
 export function Header({ onOpenMobileNav }: { onOpenMobileNav: () => void }) {
@@ -30,7 +31,7 @@ export function Header({ onOpenMobileNav }: { onOpenMobileNav: () => void }) {
   const totalCartCount = cartItems.reduce((acc, item) => acc + (item.quantity || 1), 0);
 
   const suggestions = searchQuery.trim()
-    ? MOCK_PRODUCTS.filter(
+    ? products.filter(
         (p) =>
           p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           p.category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

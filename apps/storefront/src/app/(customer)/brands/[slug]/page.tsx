@@ -1,5 +1,5 @@
 "use client";
-
+import { useStorefrontData } from "@/components/customer/storefront-context";
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -11,25 +11,24 @@ import {
   ShieldCheck,
   ChevronLeft,
 } from "lucide-react";
-import {
-  MOCK_BRANDS,
-  MOCK_PRODUCTS,
-  type MockProduct,
-} from "@hopsy/commerce/src/mock-data";
+
 import { ShopProductCard } from "@/components/customer/shop-product-card";
 import { QuickViewModal } from "@/components/customer/quick-view-modal";
 
 export default function BrandDetailPage() {
+  const { products, categories, brands, loading } = useStorefrontData();
+  if (loading) return <div>Loading...</div>;
+
   const params = useParams();
   const slug = typeof params?.slug === "string" ? params.slug : "";
 
-  const brand = MOCK_BRANDS.find((b) => b.slug === slug) || {
+  const brand = brands.find((b) => b.slug === slug) || {
     id: "apple",
     name: "Brand Partner",
     slug: "brand",
     description: "Explore our verified hardware selection from this certified manufacturer.",
     logo_url: "",
-    productCount: MOCK_PRODUCTS.length,
+    productCount: products.length,
   };
 
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -37,11 +36,11 @@ export default function BrandDetailPage() {
   const [selectedColor, setSelectedColor] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("featured");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [quickViewProduct, setQuickViewProduct] = useState<MockProduct | null>(null);
+  const [quickViewProduct, setQuickViewProduct] = useState<any | null>(null);
 
   // Filtered and Sorted Products
   const filteredProducts = useMemo(() => {
-    let list = MOCK_PRODUCTS.filter((p) => p.brand.slug === brand.slug || brand.slug === "brand");
+    let list = products.filter((p) => p.brand.slug === brand.slug || brand.slug === "brand");
 
     if (selectedPriceRange === "under_500k") {
       list = list.filter((p) => p.price < 500000);

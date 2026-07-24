@@ -147,60 +147,50 @@ export function AdminSidebar({
       {/* Brand */}
       <div
         className={cn(
-          "flex h-16 items-center border-b border-sidebar-border px-4",
-          collapsed ? "justify-center" : "justify-between"
+          "flex h-[72px] shrink-0 items-center justify-between gap-2 border-b border-sidebar-border overflow-hidden transition-all duration-300",
+          collapsed ? "px-2" : "px-4 sm:px-5"
         )}
       >
         <Link
           href="/admin"
-          className="flex items-center overflow-hidden"
+          className="flex min-w-0 flex-1 items-center overflow-hidden rounded-md outline-none focus-visible:ring-2 focus-visible:ring-primary"
           onClick={onCloseMobile}
         >
           <BrandLogo
             variant={collapsed ? "icon" : "horizontal"}
             size={collapsed ? "sm" : "md"}
-            className="dark:hidden"
+            className="shrink-0 dark:hidden"
           />
           <BrandLogo
             variant={collapsed ? "icon" : "horizontal-white"}
             size={collapsed ? "sm" : "md"}
-            className="hidden dark:inline-flex"
+            className="hidden shrink-0 dark:inline-flex"
           />
         </Link>
 
-        {/* Collapse toggle (desktop) */}
-        {!collapsed && (
+        {/* Toggle / Close */}
+        <div className="flex shrink-0 items-center">
           <button
             onClick={onToggleCollapse}
-            className="hidden rounded-lg p-1.5 text-sidebar-muted transition-colors hover:bg-sidebar-accent hover:text-foreground md:flex"
-            title="Collapse sidebar"
-            aria-label="Collapse sidebar"
+            className={cn(
+              "hidden h-8 w-8 shrink-0 items-center justify-center rounded-md text-sidebar-muted outline-none transition-all duration-300 hover:bg-sidebar-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary md:flex",
+              collapsed ? "rotate-180" : "rotate-0"
+            )}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-5 w-5" />
           </button>
-        )}
 
-        {/* Close (mobile) */}
-        <button
-          onClick={onCloseMobile}
-          className="rounded-lg p-1.5 text-sidebar-muted transition-colors hover:bg-sidebar-accent hover:text-foreground md:hidden"
-          aria-label="Close menu"
-        >
-          <X className="h-5 w-5" />
-        </button>
+          <button
+            onClick={onCloseMobile}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-sidebar-muted outline-none transition-colors hover:bg-sidebar-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary md:hidden"
+            aria-label="Close menu"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
       </div>
-
-      {/* Expand toggle when collapsed */}
-      {collapsed && (
-        <button
-          onClick={onToggleCollapse}
-          className="mx-auto mt-3 hidden rounded-lg p-1.5 text-sidebar-muted transition-colors hover:bg-sidebar-accent hover:text-foreground md:flex"
-          title="Expand sidebar"
-          aria-label="Expand sidebar"
-        >
-          <ChevronRight className="h-4 w-4" />
-        </button>
-      )}
 
       {/* Navigation */}
       <nav className="scrollbar-thin flex-1 overflow-y-auto px-3 py-4">
@@ -306,7 +296,7 @@ export function AdminSidebar({
       <aside
         className={cn(
           "z-30 hidden shrink-0 border-r border-sidebar-border transition-all duration-300 md:block",
-          isCollapsed ? "w-[76px]" : "w-64"
+          isCollapsed ? "w-[80px]" : "w-[280px]"
         )}
       >
         {renderNavContent(isCollapsed)}

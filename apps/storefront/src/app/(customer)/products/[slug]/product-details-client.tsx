@@ -1,5 +1,5 @@
 "use client";
-
+import { useStorefrontData } from "@/components/customer/storefront-context";
 import React, { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -14,7 +14,7 @@ import {
   Share2,
   Info,
 } from "lucide-react";
-import { MOCK_PRODUCTS, type MockProduct } from "@hopsy/commerce/src/mock-data";
+
 import { useWishlist } from "@/components/customer/wishlist-context";
 import { ProductCard } from "@/components/customer/product-card";
 import { QuickViewModal } from "@/components/customer/quick-view-modal";
@@ -25,7 +25,7 @@ export function ProductDetailsClient() {
   const params = useParams();
   const slug = typeof params?.slug === "string" ? params.slug : "";
 
-  const product = MOCK_PRODUCTS.find((p) => p.slug === slug) || MOCK_PRODUCTS[0];
+  const product = products.find((p) => p.slug === slug) || products[0];
 
   const { isInWishlist, toggleWishlist } = useWishlist();
   const inWishlist = isInWishlist(product.id);
@@ -33,7 +33,7 @@ export function ProductDetailsClient() {
   const [selectedImage, setSelectedImage] = useState<string>(product.images[0]);
   const [selectedVariantIdx, setSelectedVariantIdx] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<"overview" | "specs" | "reviews">("overview");
-  const [quickViewProduct, setQuickViewProduct] = useState<MockProduct | null>(null);
+  const [quickViewProduct, setQuickViewProduct] = useState<any | null>(null);
 
   const activeVariant = product.variants[selectedVariantIdx] || null;
   const activePrice = activeVariant ? activeVariant.price : product.price;
@@ -45,7 +45,7 @@ export function ProductDetailsClient() {
     ? Math.round(((activeComparePrice - activePrice) / activeComparePrice) * 100)
     : 0;
 
-  const relatedProducts = MOCK_PRODUCTS.filter(
+  const relatedProducts = products.filter(
     (p) => p.id !== product.id && (p.category.slug === product.category.slug || p.brand.slug === product.brand.slug)
   ).slice(0, 4);
 

@@ -1,6 +1,7 @@
+import { useStorefrontData } from "@/components/customer/storefront-context";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { MOCK_PRODUCTS } from "@hopsy/commerce/src/mock-data";
+
 import { ProductDetailsClient } from "./product-details-client";
 import { ProductJsonLd, BreadcrumbJsonLd } from "@hopsy/ui";
 
@@ -12,7 +13,7 @@ export async function generateMetadata(
   { params }: Props
 ): Promise<Metadata> {
   const { slug } = await params;
-  const product = MOCK_PRODUCTS.find((p) => p.slug === slug);
+  const product = products.find((p) => p.slug === slug);
 
   if (!product) {
     return {
@@ -59,7 +60,7 @@ export async function generateMetadata(
 
 export default async function ProductDetailPage({ params }: Props) {
   const { slug } = await params;
-  const product = MOCK_PRODUCTS.find((p) => p.slug === slug);
+  const product = products.find((p) => p.slug === slug);
 
   if (!product) {
     notFound();

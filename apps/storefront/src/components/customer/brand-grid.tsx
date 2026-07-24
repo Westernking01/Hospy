@@ -1,11 +1,14 @@
 "use client";
+import { useStorefrontData } from "@/components/customer/storefront-context";
 
 import React from "react";
 import Link from "next/link";
 import { ArrowRight, ShieldCheck, CheckCircle2 } from "lucide-react";
-import { MOCK_BRANDS } from "@hopsy/commerce/src/mock-data";
+
 
 export function BrandGrid() {
+  const { products, categories, brands } = useStorefrontData();
+
   return (
     <section className="py-20 bg-white border-b border-neutral-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -65,7 +68,7 @@ export function BrandGrid() {
 
         {/* Clean Architectural Grid of 10 Official Vector Logos (Zero AI/Cartoonish Assets) */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5">
-          {MOCK_BRANDS.map((brand) => (
+          {brands.map((brand) => (
             <Link
               key={brand.id}
               href={`/brands/${brand.slug}`}

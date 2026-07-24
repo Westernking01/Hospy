@@ -15,7 +15,10 @@ import {
 } from "lucide-react";
 import { PageHeader } from "@/components/admin/page-header";
 import { Card } from "@/components/admin/card";
-import { adminService, AdminProductItem } from "@hopsy/commerce/src/admin/admin.service";
+import { AdminProductItem } from "@hopsy/commerce/src/admin/admin.types";
+import { getProductsAction } from "@hopsy/commerce/src/admin/admin.actions";
+
+import { FileUpload } from "@/components/common/file-upload";
 
 export default function AdminProductEditPage() {
   const router = useRouter();
@@ -40,7 +43,7 @@ export default function AdminProductEditPage() {
   });
 
   useEffect(() => {
-    adminService.getProducts().then((products) => {
+    getProductsAction().then((products) => {
       const found = products.find((p) => p.id === id) || products[0];
       if (found) {
         setProduct(found);
@@ -258,13 +261,14 @@ export default function AdminProductEditPage() {
               <ImageIcon className="w-5 h-5 text-purple-500" />
               <span>Media</span>
             </h2>
-            <div className="w-full h-40 rounded-lg overflow-hidden bg-muted/40 border border-border flex items-center justify-center">
-              {formData.imageUrl ? (
-                <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-xs text-muted-foreground font-medium">No Image</span>
-              )}
-            </div>
+            {product && (
+              <FileUpload
+                folder="products"
+                defaultImage={formData.imageUrl}
+                onUploadComplete={(url) => setFormData({ ...formData, imageUrl: url })}
+                onRemove={() => setFormData({ ...formData, imageUrl: "" })}
+              />
+            )}
           </Card>
         </div>
       </form>

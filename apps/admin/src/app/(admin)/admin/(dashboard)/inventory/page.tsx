@@ -10,11 +10,9 @@ import { AdminTable, Column } from "@/components/admin/admin-table";
 import { AdminModal } from "@/components/admin/admin-modal";
 import { PageHeader } from "@/components/admin/page-header";
 import { StatusBadge } from "@/components/admin/status-badge";
-import {
-  adminService,
-  AdminInventoryItem,
-  AdminInventoryLogItem,
-} from "@hopsy/commerce/src/admin/admin.service";
+import { AdminInventoryItem, AdminInventoryLogItem } from "@hopsy/commerce/src/admin/admin.types";
+import { getInventoryAction } from "@hopsy/commerce/src/admin/admin.actions";
+
 
 export default function AdminInventoryPage() {
   const [stockItems, setStockItems] = useState<AdminInventoryItem[]>([]);
@@ -34,7 +32,7 @@ export default function AdminInventoryPage() {
 
   const fetchData = async () => {
     setLoading(true);
-    const data = await adminService.getInventory();
+    const data = await getInventoryAction();
     setStockItems(data.stockItems);
     setMovementLogs(data.movementLogs);
     setLoading(false);

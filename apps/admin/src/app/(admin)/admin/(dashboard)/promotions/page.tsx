@@ -13,7 +13,9 @@ import { AdminModal } from "@/components/admin/admin-modal";
 import { PageHeader } from "@/components/admin/page-header";
 import { Card } from "@/components/admin/card";
 import { StatusBadge } from "@/components/admin/status-badge";
-import { adminService, AdminPromotionItem } from "@hopsy/commerce/src/admin/admin.service";
+import { AdminPromotionItem } from "@hopsy/commerce/src/admin/admin.types";
+import { getPromotionsAction } from "@hopsy/commerce/src/admin/admin.actions";
+
 
 export default function AdminPromotionsPage() {
   const [promotions, setPromotions] = useState<AdminPromotionItem[]>([]);
@@ -31,7 +33,7 @@ export default function AdminPromotionsPage() {
   const [newMaxUses, setNewMaxUses] = useState<number>(200);
 
   useEffect(() => {
-    adminService.getPromotions().then((data) => {
+    getPromotionsAction().then((data) => {
       setPromotions(data);
       setLoading(false);
     });

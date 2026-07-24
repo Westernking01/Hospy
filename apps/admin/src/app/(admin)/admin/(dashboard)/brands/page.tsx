@@ -11,18 +11,28 @@ import {
 } from "lucide-react";
 import { AdminTable, Column } from "@/components/admin/admin-table";
 import { PageHeader } from "@/components/admin/page-header";
+import { AdminModal } from "@/components/admin/admin-modal";
 import { Card } from "@/components/admin/card";
 import { StatusBadge } from "@/components/admin/status-badge";
-import { adminService } from "@hopsy/commerce/src/admin/admin.service";
+import { getBrandsAction } from "@hopsy/commerce/src/admin/admin.actions";
+
+import { FileUpload } from "@/components/common/file-upload";
 
 export default function AdminBrandsPage() {
   const [brands, setBrands] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newBrand, setNewBrand] = useState({
+    name: "",
+    slug: "",
+    logoUrl: "",
+    partnershipTier: "GOLD",
+  });
 
   useEffect(() => {
-    adminService.getBrands().then((data) => {
+    getBrandsAction().then((data) => {
       setBrands(data);
       setLoading(false);
     });
@@ -34,6 +44,23 @@ export default function AdminBrandsPage() {
       setToastMessage(`Brand partnership '${name}' archived.`);
       setTimeout(() => setToastMessage(null), 3000);
     }
+  };
+
+  const handleCreateBrand = (e: React.FormEvent) => {
+    e.preventDefault();
+    const created = {
+      id: "brand_" + Date.now(),
+      name: newBrand.name,
+      slug: newBrand.slug || newBrand.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+      logoUrl: newBrand.logoUrl,
+      partnershipTier: newBrand.partnershipTier,
+      productCount: 0,
+    };
+    setBrands((prev) => [created, ...prev]);
+    setIsModalOpen(false);
+    setNewBrand({ name: "", slug: "", logoUrl: "", partnershipTier: "GOLD" });
+    setToastMessage(`Brand '${created.name}' added successfully!`);
+    setTimeout(() => setToastMessage(null), 3000);
   };
 
   const filtered = brands.filter((b) =>
@@ -133,7 +160,7 @@ export default function AdminBrandsPage() {
         description="Authoritative factory-direct partners (`00_READ_THIS_FIRST.md` - strictly official brand logos only)"
         actions={
           <button
-            onClick={() => alert("Brand onboarding workflow initiated")}
+            onClick={() => setIsModalOpen(true)}
             className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
@@ -167,6 +194,92 @@ export default function AdminBrandsPage() {
           onTabChange={() => {}}
         />
       </Card>
+
+      {/* Create Modal */}
+      <AdminModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Add Brand Partner"
+      >
+        <form onSubmit={handleCreateBrand} className="space-y-4 text-xs">
+          <div className="space-y-1.5">
+            <label className="font-medium uppercase tracking-wider text-muted-foreground">
+              Brand Name *
+            </label>
+            <input
+              type="text"
+              required
+              value={newBrand.name}
+              onChange={(e) => {
+                const val = e.target.value;
+                setNewBrand({
+                  ...newBrand,
+                  name: val,
+                  slug: val.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+                });
+              }}
+              placeholder="e.g. Sony"
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="font-medium uppercase tracking-wider text-muted-foreground">
+              URL Slug *
+            </label>
+            <input
+              type="text"
+              required
+              value={newBrand.slug}
+              onChange={(e) => setNewBrand({ ...newBrand, slug: e.target.value })}
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="font-medium uppercase tracking-wider text-muted-foreground">
+              Partnership Tier *
+            </label>
+            <select
+              value={newBrand.partnershipTier}
+              onChange={(e) => setNewBrand({ ...newBrand, partnershipTier: e.target.value })}
+              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <option value="PLATINUM">PLATINUM</option>
+              <option value="GOLD">GOLD</option>
+              <option value="SILVER">SILVER</option>
+            </select>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="font-medium uppercase tracking-wider text-muted-foreground">
+              Brand Logo
+            </label>
+            <FileUpload
+              folder="brands"
+              defaultImage={newBrand.logoUrl}
+              onUploadComplete={(url) => setNewBrand({ ...newBrand, logoUrl: url })}
+              onRemove={() => setNewBrand({ ...newBrand, logoUrl: "" })}
+            />
+          </div>
+
+          <div className="flex items-center justify-end gap-2 pt-4 border-t border-border">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-hover"
+            >
+              Save Brand
+            </button>
+          </div>
+        </form>
+      </AdminModal>
     </div>
   );
 }

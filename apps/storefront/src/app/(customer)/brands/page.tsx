@@ -1,14 +1,17 @@
 "use client";
-
+import { useStorefrontData } from "@/components/customer/storefront-context";
 import React, { useState } from "react";
 import Link from "next/link";
 import { ShieldCheck, Search, ArrowRight, CheckCircle2 } from "lucide-react";
-import { MOCK_BRANDS } from "@hopsy/commerce/src/mock-data";
+
 
 export default function BrandsOverviewPage() {
+  const { products, categories, brands, loading } = useStorefrontData();
+  if (loading) return <div>Loading...</div>;
+
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredBrands = MOCK_BRANDS.filter((b) =>
+  const filteredBrands = brands.filter((b) =>
     b.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     b.description.toLowerCase().includes(searchQuery.toLowerCase())
   );

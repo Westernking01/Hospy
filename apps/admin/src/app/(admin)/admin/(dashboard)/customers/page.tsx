@@ -14,7 +14,9 @@ import { AdminModal } from "@/components/admin/admin-modal";
 import { PageHeader } from "@/components/admin/page-header";
 import { Card } from "@/components/admin/card";
 import { StatusBadge } from "@/components/admin/status-badge";
-import { adminService, AdminCustomerItem } from "@hopsy/commerce/src/admin/admin.service";
+import { AdminCustomerItem } from "@hopsy/commerce/src/admin/admin.types";
+import { getCustomersAction } from "@hopsy/commerce/src/admin/admin.actions";
+
 
 export default function AdminCustomersPage() {
   const [customers, setCustomers] = useState<AdminCustomerItem[]>([]);
@@ -25,7 +27,7 @@ export default function AdminCustomersPage() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    adminService.getCustomers().then((data) => {
+    getCustomersAction().then((data) => {
       setCustomers(data);
       setLoading(false);
     });

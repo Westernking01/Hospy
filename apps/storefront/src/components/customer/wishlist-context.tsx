@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { type MockProduct } from "@hopsy/commerce/src/mock-data";
+
 
 interface WishlistContextType {
   wishlistIds: string[];
