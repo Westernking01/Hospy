@@ -248,7 +248,7 @@ export default function AdminOrderDetailPage() {
             <span>Dispatch Manifest SKUs</span>
           </h3>
 
-          <div className="border border-border rounded-lg overflow-hidden">
+          <div className="border border-border rounded-lg overflow-x-auto overflow-y-hidden w-full">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-muted/60 border-b border-border text-muted-foreground uppercase font-medium tracking-wider">

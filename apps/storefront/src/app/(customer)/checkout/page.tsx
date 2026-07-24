@@ -428,7 +428,7 @@ export default function CheckoutPage() {
                   placeholder="Street Address or Landmark"
                   className="w-full h-11 px-4 rounded-xl border border-neutral-200 bg-white text-xs font-medium text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-900 shadow-2xs placeholder:text-neutral-400"
                 />
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <input
                     type="text"
                     required
@@ -458,7 +458,7 @@ export default function CheckoutPage() {
                 <label className="block text-xs font-bold text-neutral-800">
                   Select Payment Method
                 </label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <button
                     type="button"
                     onClick={() => setPaymentMethod("PAYSTACK")}

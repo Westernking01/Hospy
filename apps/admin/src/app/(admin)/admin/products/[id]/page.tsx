@@ -154,7 +154,7 @@ export default function AdminProductEditPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                     URL Slug
@@ -188,7 +188,7 @@ export default function AdminProductEditPage() {
               <DollarSign className="w-5 h-5 text-emerald-500" />
               <span>Pricing Modification (NGN)</span>
             </h2>
-            <div className="grid grid-cols-2 gap-4 pt-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
               <div className="space-y-1.5">
                 <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Current Price (₦)

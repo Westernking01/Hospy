@@ -182,7 +182,7 @@ export function ProductDetailsClient() {
                   <span className="font-semibold text-primary">{activeVariant?.name}</span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {product.variants.map((v, idx) => (
                     <button
                       key={v.id}
@@ -214,11 +214,11 @@ export function ProductDetailsClient() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-5 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
                 <Button
                   disabled
                   size="lg"
-                  className="col-span-3 h-13 font-bold text-xs uppercase tracking-wider gap-2 bg-secondary text-muted-foreground cursor-not-allowed border border-border"
+                  className="sm:col-span-3 h-13 font-bold text-xs uppercase tracking-wider gap-2 bg-secondary text-muted-foreground cursor-not-allowed border border-border"
                   title="Shopping Cart available in Phase 3 — Commerce Engine"
                 >
                   <ShoppingCart className="w-5 h-5" /> Add to Cart (Phase 3)
@@ -228,7 +228,7 @@ export function ProductDetailsClient() {
                   variant="outline"
                   size="lg"
                   onClick={() => toggleWishlist(product)}
-                  className={`col-span-2 h-13 font-bold text-xs gap-2 rounded-xl ${
+                  className={`sm:col-span-2 h-13 font-bold text-xs gap-2 rounded-xl ${
                     inWishlist ? "border-rose-500 text-rose-500 bg-rose-500/10" : ""
                   }`}
                 >

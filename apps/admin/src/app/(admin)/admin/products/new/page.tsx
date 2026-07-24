@@ -292,7 +292,7 @@ export default function AdminProductCreatePage() {
                 </select>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <label className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                     Initial Stock
@@ -357,7 +357,7 @@ export default function AdminProductCreatePage() {
               <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 Publishing Status
               </label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <button
                   type="button"
                   onClick={() => setFormData({ ...formData, status: "PUBLISHED" })}

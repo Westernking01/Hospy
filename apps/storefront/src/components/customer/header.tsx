@@ -94,7 +94,7 @@ export function Header({ onOpenMobileNav }: { onOpenMobileNav: () => void }) {
           <div className="flex items-center gap-3">
             <button
               type="button"
-              className="md:hidden p-2 text-neutral-900 hover:bg-neutral-100 rounded-lg"
+              className="md:hidden p-2 min-w-[44px] min-h-[44px] text-neutral-900 hover:bg-neutral-100 rounded-lg flex items-center justify-center"
               onClick={onOpenMobileNav}
               aria-label="Open navigation menu"
             >
@@ -181,7 +181,7 @@ export function Header({ onOpenMobileNav }: { onOpenMobileNav: () => void }) {
                 <button
                   type="button"
                   onClick={() => setIsSearchOpen(true)}
-                  className="w-10 h-10 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center text-neutral-900 transition-colors"
+                  className="w-11 h-11 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center text-neutral-900 transition-colors"
                   aria-label="Search products"
                 >
                   <Search className="w-4.5 h-4.5" />
@@ -240,7 +240,7 @@ export function Header({ onOpenMobileNav }: { onOpenMobileNav: () => void }) {
             {/* Account Icon */}
             <Link
               href="/auth/login"
-              className="w-10 h-10 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center text-neutral-900 transition-colors"
+              className="hidden sm:flex w-11 h-11 rounded-full bg-neutral-100 hover:bg-neutral-200 items-center justify-center text-neutral-900 transition-colors"
               aria-label="User Account"
             >
               <User className="w-4.5 h-4.5" />
@@ -249,7 +249,7 @@ export function Header({ onOpenMobileNav }: { onOpenMobileNav: () => void }) {
             {/* Wishlist Icon with Badge */}
             <Link
               href="/wishlist"
-              className="relative w-10 h-10 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center text-neutral-900 transition-colors"
+              className="hidden sm:flex relative w-11 h-11 rounded-full bg-neutral-100 hover:bg-neutral-200 items-center justify-center text-neutral-900 transition-colors"
               aria-label={`Wishlist (${wishlistItems.length})`}
             >
               <Heart className="w-4.5 h-4.5" />
@@ -263,7 +263,7 @@ export function Header({ onOpenMobileNav }: { onOpenMobileNav: () => void }) {
             {/* Cart Icon with Badge */}
             <Link
               href="/cart"
-              className="relative w-10 h-10 rounded-full bg-neutral-950 hover:bg-orange-600 text-white flex items-center justify-center transition-colors shadow-sm"
+              className="relative w-11 h-11 rounded-full bg-neutral-950 hover:bg-orange-600 text-white flex items-center justify-center transition-colors shadow-sm"
               aria-label={`Cart (${totalCartCount})`}
             >
               <ShoppingCart className="w-4.5 h-4.5" />

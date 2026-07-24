@@ -265,7 +265,7 @@ export default function AdminCustomersPage() {
             </div>
 
             {/* Standing summary */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="p-4 rounded-lg bg-muted/40 border border-border space-y-1">
                 <span className="font-medium text-muted-foreground uppercase tracking-wider text-[10px]">
                   Total Orders Placed
