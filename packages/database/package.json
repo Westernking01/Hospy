@@ -10,6 +10,7 @@
     "prisma"
   ],
   "scripts": {
+    "postinstall": "prisma generate",
     "typecheck": "tsc --noEmit",
     "generate": "prisma generate",
     "db:push": "dotenv -e ../../.env -- prisma db push",
