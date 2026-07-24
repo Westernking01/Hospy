@@ -1,0 +1,22 @@
+{
+  "name": "@hopsy/validation",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@hopsy/typescript-config": "workspace:*",
+    "@types/node": "^20",
+    "typescript": "^5"
+  }
+}

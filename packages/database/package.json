@@ -1,0 +1,38 @@
+{
+  "name": "@hopsy/database",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "files": [
+    "src",
+    "prisma"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "generate": "prisma generate",
+    "db:push": "dotenv -e ../../.env -- prisma db push",
+    "db:seed": "dotenv -e ../../.env -- tsx scripts/seed.ts",
+    "db:create-admin": "dotenv -e ../../.env -- tsx scripts/create-admin.ts",
+    "db:studio": "dotenv -e ../../.env -- prisma studio"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "^2.45.0",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "@hopsy/typescript-config": "workspace:*",
+    "@types/node": "^20",
+    "@types/pg": "^8.20.0",
+    "dotenv": "^17.4.2",
+    "dotenv-cli": "^11.0.0",
+    "next": "16.2.10",
+    "prisma": "^7.8.0",
+    "tsx": "^4.23.1",
+    "typescript": "^5"
+  }
+}

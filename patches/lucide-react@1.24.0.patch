@@ -1,0 +1,47 @@
+diff --git a/dist/cjs/lucide-react.js b/dist/cjs/lucide-react.js
+index 1eb91a916803afcc4a55067dc24779a2af13824f..343fcde7f4517afcb853c00bb52e715a864f7237 100644
+--- a/dist/cjs/lucide-react.js
++++ b/dist/cjs/lucide-react.js
+@@ -1,3 +1,4 @@
++"use client";
+ /**
+  * @license lucide-react v1.24.0 - ISC
+  *
+@@ -27089,3 +27090,4 @@ exports.createLucideIcon = createLucideIcon;
+ exports.icons = index;
+ exports.useLucideContext = useLucideContext;
+ //# sourceMappingURL=lucide-react.js.map
++
+diff --git a/dist/esm/DynamicIcon.mjs b/dist/esm/DynamicIcon.mjs
+index 2e5ef9845b0f3f843ebddf3e299f05b35dd9bba5..8f46f3aaa9a1525bc7b3a9f3001ffc2bd0a85f4b 100644
+--- a/dist/esm/DynamicIcon.mjs
++++ b/dist/esm/DynamicIcon.mjs
+@@ -1,5 +1,5 @@
+-"use strict";
+ "use client";
++"use strict";
+ /**
+  * @license lucide-react v1.24.0 - ISC
+  *
+diff --git a/dist/esm/Icon.mjs b/dist/esm/Icon.mjs
+index 39b1f13c5b806e969053f84cac6c9ce14a50e939..bb05a4f519ce60a349da3f461f4955ae70b022e0 100644
+--- a/dist/esm/Icon.mjs
++++ b/dist/esm/Icon.mjs
+@@ -1,5 +1,5 @@
+-"use strict";
+ "use client";
++"use strict";
+ /**
+  * @license lucide-react v1.24.0 - ISC
+  *
+diff --git a/dist/esm/context.mjs b/dist/esm/context.mjs
+index 3bc7046a05d3020124b616762e0ce506b52598b0..2e1b07ceb51c25a27b3bb97ee59bc546a8b4068d 100644
+--- a/dist/esm/context.mjs
++++ b/dist/esm/context.mjs
+@@ -1,5 +1,5 @@
+-"use strict";
+ "use client";
++"use strict";
+ /**
+  * @license lucide-react v1.24.0 - ISC
+  *
