@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { BrandLogo } from "@/components/common/brand-logo";
+import { createClient } from "@/lib/supabase/client";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -23,23 +24,44 @@ export default function RegisterPage() {
       return;
     }
     setLoading(true);
-    setTimeout(() => {
-      try {
-        localStorage.setItem(
-          "hopsyplaza_auth_user",
-          JSON.stringify({
-            id: "usr_" + Math.random().toString(36).substring(2, 9),
-            email,
-            name: email.split("@")[0] || "Customer",
-            role: "CUSTOMER",
-          })
-        );
-      } catch {
-        // ignore
+
+    try {
+      const supabase = createClient();
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (authError) {
+        throw new Error(authError.message);
       }
-      setLoading(false);
+
+      if (!authData.user) {
+        throw new Error("Failed to create auth user. Please try again.");
+      }
+
+      // Create the customer record in Postgres via our API route
+      const response = await fetch("/api/v1/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          auth_user_id: authData.user.id,
+          email,
+        }),
+      });
+
+      const resData = await response.json();
+      if (!resData.success) {
+        throw new Error(resData.message || "Failed to create customer profile.");
+      }
+
+      // Success, route to account
       router.push("/account");
-    }, 800);
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

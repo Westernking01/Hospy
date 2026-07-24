@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { BrandLogo } from "@/components/common/brand-logo";
+import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -23,23 +24,25 @@ export default function LoginPage() {
       return;
     }
     setLoading(true);
-    setTimeout(() => {
-      try {
-        localStorage.setItem(
-          "hopsyplaza_auth_user",
-          JSON.stringify({
-            id: "usr_101",
-            email,
-            name: email.split("@")[0] || "Customer",
-            role: "CUSTOMER",
-          })
-        );
-      } catch {
-        // ignore
+
+    try {
+      const supabase = createClient();
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        throw new Error("Invalid email or password.");
       }
-      setLoading(false);
+
+      // Success, route to account
       router.push("/account");
-    }, 800);
+    } catch (err: any) {
+      setError(err.message || "Authentication failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
